@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>记账表单</title>
+    <title>生活·计账单</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
     <link rel="stylesheet" href="style.css">
@@ -13,36 +13,36 @@
 
 <body>
     <div class="container">
-        <h1>记账表单</h1>
+        <h1>生活·计账单</h1>
         <!-- 设置按钮和弹窗 -->
         <button class="settings-btn btn" onclick="toggleModal('settingsModal', true)">⚙️</button>
         <form id="expenseForm">
             <div class="form-group">
-                <label for="name">您的姓名：</label>
+                <label for="name">1.您的姓名：</label>
                 <select id="name" class="input-field" required autocomplete="name">
                     <option value="">请选择姓名</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="namegive-title">您和谁一起分摊：</label>
+                <label for="namegive-title">2.您和谁一起分摊：</label>
                 <input type="text" id="namegive" class="input-field" readonly required
                     onclick="toggleModal('shareModal', true)" autocomplete="off">
             </div>
 
             <div class="form-group">
-                <label for="money-title">您付了多少钱：</label>
+                <label for="money-title">3.您付了多少钱：</label>
                 <input type="number" id="money" class="input-field" step="0.01" required
                     autocomplete="transaction-amount">
             </div>
 
             <div class="form-group">
-                <label for="what-title">您购买了什么：</label>
+                <label for="what-title">4.您购买了什么：</label>
                 <input type="text" id="what" class="input-field" required autocomplete="off">
             </div>
 
             <div class="form-group">
-                <label for="why-title">备注：</label>
+                <label for="why-title">5.备注：</label>
                 <input type="text" id="why" class="input-field" maxlength="500" autocomplete="off">
             </div>
             <!-- 按钮块 -->
@@ -65,8 +65,6 @@
             <button class="btn" onclick="confirmShare()">确认</button>
         </div>
     </div>
-
-
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="toggleModal('settingsModal', false)">&times;</span>
