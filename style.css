@@ -47,19 +47,19 @@ h1, h2 {
     text-align: center;
     margin-top: 15px;
     margin-bottom: 15px;
-    font-size: 20px;
+    font-size: 22px;
 }
 
 /* 表单样式 */
 .form-group {
     width: 90%; /* 设置宽度为表单整体宽度的 80%，可根据需要调整 */
-    margin: 0 auto 10px; /* 上下自动居中，底部间距为 20px */
+    margin: 0 auto 15px; /* 上下自动居中，底部间距为 20px */
     text-align: left; /* 确保标签文本左对齐 */
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-weight: bold;
 }
 
@@ -86,7 +86,7 @@ label {
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.3s;
@@ -154,7 +154,7 @@ label {
     justify-content: space-between; /* 按钮两端对齐 */
     margin-top: 15px; /* 和表单内容保持一定间距 */
     margin-bottom: 15px; /* 和表单内容保持一定间距 */
-    width: 80%; /* 按钮块的宽度 */
+    width: 60%; /* 按钮块的宽度 */
     position: relative; /* 确保位置相对于父容器 */
     margin-left: auto;  /* 自动平衡左边距 */
     margin-right: auto; /* 自动平衡右边距 */
@@ -166,7 +166,7 @@ label {
     color: #fff; /* 白色文字 */
     margin-right: 50px; /* 与提交按钮的间距 */
     padding: 12px 24px;
-    font-size: 16px;
+    font-size: 14px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
