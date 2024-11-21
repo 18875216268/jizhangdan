@@ -153,7 +153,7 @@ label {
 .btn-block {
     display: flex;
     justify-content: space-between; /* 按钮两端对齐 */
-    margin-top: 15px; /* 和表单内容保持一定间距 */
+    margin-top: 25px; /* 和表单内容保持一定间距 */
     margin-bottom: 15px; /* 和表单内容保持一定间距 */
     width: 70%; /* 按钮块的宽度 */
     position: relative; /* 确保位置相对于父容器 */
