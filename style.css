@@ -71,6 +71,7 @@ label {
     border-radius: 8px;
     transition: border-color 0.3s;
     color: #515151;
+    font-size: 14px;
 }
 
 .input-field:focus {
