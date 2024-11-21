@@ -314,7 +314,45 @@ select.input-field {
     padding-right: 40px;
 }
 
+/* 下拉选项整体样式 */
+select.input-field option {
+    font-size: 16px; /* 字体大小 */
+    padding: 12px 16px; /* 内边距，让选项更宽松 */
+    color: rgba(0, 0, 0, 0.8); /* 黑色带透明度 */
+    background-color: #fff; /* 白色背景 */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* 选项分隔线 */
+    transition: all 0.3s ease; /* 平滑过渡 */
+}
+
+/* 悬停选项时的样式 */
+select.input-field option:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* 背景浅灰带透明 */
+    color: rgba(0, 0, 0, 0.9); /* 文本颜色更深 */
+}
+
+/* 选中选项时的样式 */
+select.input-field option:checked {
+    background-color: rgba(0, 0, 0, 0.1); /* 背景灰色带透明 */
+    color: #000; /* 文字黑色 */
+    font-weight: bold; /* 加粗 */
+}
+
 @media (max-width: 768px) {
+
+    /* 下拉选项列表的宽度调整 */
+    select.input-field option {
+        font-size: 14px; /* 缩小选项字体大小 */
+        width: 80vw; /* 相对于屏幕宽度的 80% */
+        max-width: 80vw; /* 确保不超过屏幕的 80% */
+        padding: 10px; /* 合理的内边距 */
+    }
+
+    /* 修改下拉框本身的位置和适配 */
+    select.input-field {
+        width: 80vw; /* 输入框宽度占 80% 屏幕宽度 */
+        max-width: 80vw; /* 最大宽度限制 */
+    }
+
     .container {
         padding: 15px;
     }
