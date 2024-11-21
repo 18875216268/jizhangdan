@@ -15,6 +15,7 @@
     padding: 0;
     box-sizing: border-box;
     font-family: -apple-system, system-ui, sans-serif;
+    font-size: 14px;
 }
 
 body {
@@ -44,22 +45,22 @@ body {
 h1, h2 {
     color: var(--primary);
     text-align: center;
-    margin-top: 24px;
-    margin-bottom: 24px;
-    font-size: 24px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 20px;
 }
 
 /* 表单样式 */
 .form-group {
     width: 90%; /* 设置宽度为表单整体宽度的 80%，可根据需要调整 */
-    margin: 0 auto 20px; /* 上下自动居中，底部间距为 20px */
+    margin: 0 auto 10px; /* 上下自动居中，底部间距为 20px */
     text-align: left; /* 确保标签文本左对齐 */
 }
 
 label {
     display: block;
     margin-bottom: 8px;
-    font-weight: 500;
+    font-weight: bold;
 }
 
 .input-field {
@@ -68,8 +69,8 @@ label {
     padding: 8px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    font-size: 14px;
     transition: border-color 0.3s;
+    color: #515151;
 }
 
 .input-field:focus {
@@ -151,7 +152,8 @@ label {
 .btn-block {
     display: flex;
     justify-content: space-between; /* 按钮两端对齐 */
-    margin-top: 20px; /* 和表单内容保持一定间距 */
+    margin-top: 15px; /* 和表单内容保持一定间距 */
+    margin-bottom: 15px; /* 和表单内容保持一定间距 */
     width: 80%; /* 按钮块的宽度 */
     position: relative; /* 确保位置相对于父容器 */
     margin-left: auto;  /* 自动平衡左边距 */
