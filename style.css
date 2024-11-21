@@ -1,0 +1,293 @@
+:root {
+    --primary: #4CAF50;
+    --primary-dark: #45a049;
+    --bg: #f5f5f5;
+    --card: #fff;
+    --text: #333;
+    --border: #ddd;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --modal-bg: rgba(0, 0, 0, 0.5);
+}
+
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, system-ui, sans-serif;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    width: 100%; /* 设置为100% */
+    max-width: 500px; /* 限制最大宽度 */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    margin: 0 auto; /* 居中显示 */
+    box-sizing: border-box;
+}
+
+/* 标题样式 */
+h1, h2 {
+    color: var(--primary);
+    text-align: center;
+    margin-bottom: 24px;
+    font-size: 24px;
+}
+
+/* 表单样式 */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.input-field {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.input-field:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+/* 通用按钮样式 */
+.btn{
+    width: 100%;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+/* 设置弹窗添加/确认按钮样式 */
+
+/* 按钮容器布局设置 */
+.shezhi-anniukuang {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px; /* 按钮之间的间距 */
+    margin-top: 20px; /* 输入框和按钮组之间的间距 */
+}
+
+.shezhi-btn{
+    flex: 1; /* 让按钮在容器中等分占据空间 */
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.add-btn {
+    background-color: #4CAF50; /* 添加按钮为绿色 */
+    color: white;
+    transition: background 0.3s;
+}
+
+.add-btn:hover {
+    background-color: #45a049;
+}
+
+/* 设置弹窗删除/减少按钮样式 */
+.del-btn {
+    background-color: #f44336; /* 删除按钮为红色 */
+    color: white;
+    transition: background 0.3s;
+}
+
+.del-btn:hover {
+    background-color: #e53935;
+}
+
+/* 按钮块样式 */
+.btn-block {
+    display: flex;
+    justify-content: space-between; /* 按钮两端对齐 */
+    margin-top: 20px; /* 和表单内容保持一定间距 */
+    width: 80%; /* 按钮块的宽度 */
+    position: relative; /* 确保位置相对于父容器 */
+    margin-left: auto;  /* 自动平衡左边距 */
+    margin-right: auto; /* 自动平衡右边距 */
+}
+
+/* 查看按钮样式 */
+.view-btn {
+    background-color: #007bff; /* 蓝色背景 */
+    color: #fff; /* 白色文字 */
+    margin-right: 50px; /* 与提交按钮的间距 */
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.view-btn:hover {
+    background-color: #0056b3; /* 深蓝色背景 */
+}
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--modal-bg);
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--card);
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+}
+
+/* 多选项样式 */
+.select-group {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 10px 0;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: repeat(4, 1fr); /* 一行显示 4 个选项 */
+}
+
+.select-item {
+    padding: 8px; /* 缩小内边距 */
+    font-size: 14px; /* 缩小字体大小 */
+    border-radius: 6px;
+    background: var(--bg);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.select-item:hover {
+    background: #e8f5e9;
+}
+
+.select-item.selected {
+    background: #4CAF50; /* 已选中的背景色 */
+    color: #fff; /* 已选中文本颜色 */
+}
+
+/* 调整确认按钮与上方选项之间的间距 */
+.modal-content .select-group {
+    margin-bottom: 60px; /* 原有间距基础上增加 30px */
+}
+
+.container {
+    position: relative; /* 确保 container 是相对定位容器 */
+}
+
+.settings-btn {
+    position: absolute; /* 设置为相对于 container 的绝对定位 */
+    top: 15px; /* 距离 container 顶部 15px */
+    right: 15px; /* 距离 container 右侧 15px */
+    width: auto; /* 取消固定宽度 */
+    height: auto; /* 取消固定高度 */
+    border-radius: 0; /* 取消圆角 */
+    box-shadow: none; /* 取消阴影 */
+    padding: 5px 10px; /* 添加适当的内边距 */
+    background: none; /* 取消背景颜色 */
+    font-size: 16px; /* 调整字体大小 */
+    color: var(--primary); /* 可根据需要设置字体颜色 */
+    z-index: 10; /* 确保显示在其他内容之上 */
+}
+
+
+/* 关闭按钮样式 */
+.close {
+    float: right;
+    cursor: pointer;
+    font-size: 24px;
+    color: #666;
+}
+
+/* 提示消息样式 */
+.toast-message {
+    position: fixed;
+    bottom: 20px; /* 调整位置到页面底部 */
+    right: 20px;  /* 调整位置到页面右侧 */
+    background: var(--primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 2000;
+}
+
+.toast-message.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 特殊输入框样式 */
+#namegive {
+    cursor: pointer;
+}
+
+/* 下拉框样式 */
+select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 18px;
+    }
+    input, select, #backButton, #submitButton {
+        font-size: 12px;
+        padding: 8px;
+    }
+    #backButton, #submitButton {
+        width: 100%;
+    }
+}
