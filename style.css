@@ -19,7 +19,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f2f5;
+    background-color: #ffffff;
     color: #333;
     display: flex;
     justify-content: center;
@@ -44,13 +44,16 @@ body {
 h1, h2 {
     color: var(--primary);
     text-align: center;
+    margin-top: 24px;
     margin-bottom: 24px;
     font-size: 24px;
 }
 
 /* 表单样式 */
 .form-group {
-    margin-bottom: 20px;
+    width: 90%; /* 设置宽度为表单整体宽度的 80%，可根据需要调整 */
+    margin: 0 auto 20px; /* 上下自动居中，底部间距为 20px */
+    text-align: left; /* 确保标签文本左对齐 */
 }
 
 label {
@@ -60,11 +63,12 @@ label {
 }
 
 .input-field {
-    width: 100%;
-    padding: 12px;
+    width: 100%; /* 与按钮宽度保持一致 */
+    margin: 0 auto; /* 居中对齐 */
+    padding: 8px;
     border: 1px solid var(--border);
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
     transition: border-color 0.3s;
 }
 
@@ -95,14 +99,14 @@ label {
 
 /* 按钮容器布局设置 */
 .shezhi-anniukuang {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px; /* 按钮之间的间距 */
-    margin-top: 20px; /* 输入框和按钮组之间的间距 */
+    display: flex; /* 弹性布局 */
+    justify-content: center; /* 子元素居中 */
+    gap: 20px; /* 按钮之间的水平间距 */
+    margin-top: 30px; /* 与上方内容的距离 */
+    width: 100%; /* 父容器宽度100% */
 }
 
-.shezhi-btn{
-    flex: 1; /* 让按钮在容器中等分占据空间 */
+.shezhi-btn {
     text-align: center;
     padding: 12px 0;
     border-radius: 8px;
@@ -129,6 +133,18 @@ label {
 
 .del-btn:hover {
     background-color: #e53935;
+}
+
+.add-btn, .del-btn {
+    width: 30%; /* 按钮宽度为父容器的35% */
+    height: 30px; /* 按钮高度 */
+    display: flex; /* 弹性布局 */
+    align-items: center; /* 垂直居中 */
+    justify-content: center; /* 水平居中 */
+    font-size: 14px; /* 按钮文字大小 */
+    text-align: center; /* 文本居中 */
+    padding: 0; /* 移除默认内边距 */
+    border-radius: 30px; /* 圆角按钮 */
 }
 
 /* 按钮块样式 */
@@ -170,11 +186,28 @@ label {
 
 .modal-content {
     background: var(--card);
-    margin: 15% auto;
     padding: 20px;
     border-radius: 12px;
     width: 90%;
-    max-width: 500px;
+    max-width: 350px;
+
+    /* 新增居中相关样式 */
+    position: absolute; /* 让其相对父级（modal）定位 */
+    top: 50%; /* 距顶部50% */
+    left: 50%; /* 距左侧50% */
+    transform: translate(-50%, -50%); /* 通过平移实现真正的居中 */
+}
+
+#newName {
+    display: block; /* 确保是块级元素 */
+    margin: 0 auto; /* 自动平衡左右边距，水平居中 */
+    width: 95%; /* 设置宽度（根据需要调整） */
+    padding: 8px; /* 调整输入框内部填充 */
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px; /* 调整字体大小 */
+    transition: border-color 0.3s;
+    text-align: center; /* 可选：让文本在输入框内居中 */
 }
 
 /* 多选项样式 */
@@ -264,6 +297,7 @@ label {
 /* 特殊输入框样式 */
 #namegive {
     cursor: pointer;
+    width: 100%;
 }
 
 /* 下拉框样式 */
