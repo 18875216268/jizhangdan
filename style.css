@@ -256,14 +256,15 @@ label {
     position: absolute; /* 设置为相对于 container 的绝对定位 */
     top: 15px; /* 距离 container 顶部 15px */
     right: 15px; /* 距离 container 右侧 15px */
-    width: auto; /* 取消固定宽度 */
-    height: auto; /* 取消固定高度 */
-    border-radius: 0; /* 取消圆角 */
-    box-shadow: none; /* 取消阴影 */
-    padding: 5px 10px; /* 添加适当的内边距 */
-    background: none; /* 取消背景颜色 */
-    font-size: 16px; /* 调整字体大小 */
-    color: var(--primary); /* 可根据需要设置字体颜色 */
+    width: 40px; /* 按钮宽度 */
+    height: 40px; /* 按钮高度 */
+    font-size: 16px; /* 字体大小 */
+    color: var(--primary); /* 按钮文字颜色 */
+    background: none; /* 清除默认背景色 */
+    border: none; /* 清除默认边框 */
+    outline: none; /* 点击后清除聚焦样式 */
+    box-shadow: none; /* 移除默认阴影 */
+    cursor: pointer; /* 鼠标变为点击手势 */
     z-index: 10; /* 确保显示在其他内容之上 */
 }
 
