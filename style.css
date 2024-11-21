@@ -347,12 +347,6 @@ select.input-field option:checked {
         padding: 10px; /* 合理的内边距 */
     }
 
-    /* 修改下拉框本身的位置和适配 */
-    select.input-field {
-        width: 80vw; /* 输入框宽度占 80% 屏幕宽度 */
-        max-width: 80vw; /* 最大宽度限制 */
-    }
-
     .container {
         padding: 15px;
     }
