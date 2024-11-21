@@ -165,7 +165,7 @@ label {
 .view-btn {
     background-color: #007bff; /* 蓝色背景 */
     color: #fff; /* 白色文字 */
-    margin-right: 50px; /* 与提交按钮的间距 */
+    margin-right: 40px; /* 与提交按钮的间距 */
     padding: 12px 24px;
     font-size: 14px;
     border: none;
