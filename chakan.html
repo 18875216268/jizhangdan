@@ -96,14 +96,11 @@
         }
         /* 调整记录块的宽度 */
         .jilu h3 {
-            margin-top: 5px;
-            margin-bottom: 10px;
+            margin: 0;
             font-size: 14px; /* 日期字体大小 */
             color: #4CAF50;
         }
         .jilu p {
-            margin-top: 0px;
-            margin-bottom: 5px;
             font-size: 14px; /* 设置描述字体大小 */
         }
 
@@ -124,7 +121,6 @@
             table-layout: fixed; /* 固定列宽 */
             border-collapse: collapse; /* 去掉单元格之间的空隙 */
             border-spacing: 0;
-            margin-bottom: 5px;
         }
         table th, table td {
             border: 1px solid #ddd; /* 设置单元格的边框 */
@@ -181,7 +177,7 @@
             gap: 10px;
         }
         .search-popup input {
-            width: 60%;
+            width: 70%;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -194,7 +190,7 @@
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            width: 150px;
+            width: 60px;
         }
         .search-popup button:nth-child(2) {
             background-color: #4CAF50;
@@ -292,7 +288,7 @@
     </div>
 
     <!-- 通知弹窗 -->
-    <div class="notification" id="notification">记录已隐藏！</div>
+    <div class="notification" id="notification">记录已更新为 '已完成'</div>
 
     <script>
         // Firebase 配置和初始化
@@ -393,7 +389,7 @@
                 recordElement.innerHTML = `
                     <button class="settings-btn" onclick="updateRecordState('${id}')">⚙</button>
                     <h3>${record.date}</h3>
-                    <p>💡 ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
+                    <p>→ ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
                     ${tableHTML}
                     <p class="remark">备注: ${record.why || "无备注"}</p>
                 `;
