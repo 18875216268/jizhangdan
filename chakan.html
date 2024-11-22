@@ -168,16 +168,18 @@
             border-radius: 10px;
             display: none;
             z-index: 1100;
-            width: auto;
+            width: 90%; /* 动态宽度，适应不同设备 */
+            max-width: 500px; /* 最大宽度，防止在大屏幕上过宽 */
         }
         .search-popup-content {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+            flex-wrap: nowrap; /* 确保内容不换行 */
         }
         .search-popup input {
-            width: 70%;
+            flex: 1;
             padding: 10px;
             font-size: 16px;
             border: 1px solid #ddd;
@@ -191,6 +193,7 @@
             border: none;
             border-radius: 5px;
             width: 60px;
+            flex-shrink: 0;
         }
         .search-popup button:nth-child(2) {
             background-color: #4CAF50;
