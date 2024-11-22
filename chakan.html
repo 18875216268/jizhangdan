@@ -167,10 +167,8 @@
             border-radius: 10px;
             display: none;
             z-index: 1100;
-            width: 90%; /* 动态宽度，适应不同设备 */
-            max-width: 380px; /* 最大宽度，防止在大屏幕上过宽 */
-            margin-left: 10px;
-            margin-right: 10px;
+            width: calc(100% - 20px); /* 让搜索弹窗在移动端两侧有10px距离 */
+            max-width: 400px; /* 设置最大宽度 */
         }
         .search-popup-content {
             display: flex;
