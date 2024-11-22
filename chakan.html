@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活人·记录</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <!-- CSS 美化 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        /* 顶部标题栏样式 */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #top-title{
+            font-weight: bold;
+        }
+
+
+        /* 右侧图标样式 */
+        .top-bar img {
+            position: absolute;
+            right: 20px; /* 距离右侧20px */
+            top: 50%; /* 垂直居中 */
+            transform: translateY(-50%);
+            width: 24px; /* 图标宽度 */
+            height: 24px; /* 图标高度 */
+            cursor: pointer; /* 鼠标悬停为手型 */
+        }
+        /* 底部导航栏样式 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+        }
+        .bottom-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+        .bottom-bar img {
+            width: 20px;
+            height: 20px;
+        }
+        .bottom-bar span {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        /* 内容块（记录块的容器）样式 */
+        .content {
+            padding: 60px 10px 80px; /* 留出顶部和底部空间 */
+            max-width: 1200px; /* 限制最大宽度 */
+            margin: 0 auto;
+            display: grid; /* 使用 Grid 布局 */
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 每个记录块最小宽度300px */
+            gap: 10px; /* 记录块之间的间距 */
+            justify-content: space-between; /* 水平分散对齐 */
+        }
+        /* 每个记录块样式 */
+        .jilu {
+            background: #fff;
+            padding: 10px; /* 内边距控制记录块的内部内容与边框的距离 */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            position: relative; /* 为右上角按钮定位提供上下文 */
+            overflow: hidden; /* 确保子元素溢出部分被裁剪 */
+            font-size: 14px; /* 设置记录块中内容的字体大小 */
+        }
+        /* 调整记录块的宽度 */
+        .jilu h3 {
+            margin-top: 5px;
+            margin-bottom: 10px;
+            font-size: 14px; /* 日期字体大小 */
+            color: #4CAF50;
+        }
+        .jilu p {
+            margin-top: 0px;
+            margin-bottom: 5px;
+            font-size: 14px; /* 设置描述字体大小 */
+        }
+
+        /* 右上角按钮 */
+        .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%; /* 表格宽度为记录块的宽度 */
+            table-layout: fixed; /* 固定列宽 */
+            border-collapse: collapse; /* 去掉单元格之间的空隙 */
+            border-spacing: 0;
+            margin-bottom: 5px;
+        }
+        table th, table td {
+            border: 1px solid #ddd; /* 设置单元格的边框 */
+            padding: 5px; /* 调整单元格的内边距以控制行高 */
+            text-align: center; /* 文本居中 */
+            overflow: hidden; /* 超出部分隐藏 */
+            white-space: nowrap; /* 禁止换行 */
+            font-size: 14px; /* 表格内容字体大小 */
+        }
+        table th {
+            background-color: #f2f2f2; /* 表头背景颜色 */
+            font-weight: bold; /* 表头字体加粗 */
+        }
+        /* 缩小支付列的宽度 */
+        table th:nth-child(3), table td:nth-child(3) {
+            width: 50px; /* 调整支付列的宽度 */
+        }
+        /* 单元格内容支持左右滑动 */
+        table td div {
+            overflow-x: auto; /* 支持左右滑动 */
+            -ms-overflow-style: none; /* 隐藏 IE 和 Edge 的滚动条 */
+            scrollbar-width: none; /* 隐藏 Firefox 的滚动条 */
+            white-space: nowrap;
+        }
+        table td div::-webkit-scrollbar {
+            display: none; /* 隐藏 Webkit 滚动条 */
+        }
+
+        /* 备注样式 */
+        .remark {
+            color: #666;
+            font-size: 12.5px; /* 备注字体大小 */
+            margin-top: 5px;
+        }
+
+        /* 搜索弹窗样式 */
+        .search-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: none;
+            z-index: 1100;
+            width: auto;
+        }
+        .search-popup-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .search-popup input {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+        }
+        .search-popup button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            width: 80px;
+        }
+        .search-popup button:nth-child(2) {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .search-popup button:nth-child(2):hover {
+            background-color: #45a049;
+        }
+        .search-popup button:nth-child(3) {
+            background-color: #f44336;
+            color: white;
+        }
+        .search-popup button:nth-child(3):hover {
+            background-color: #e53935;
+        }
+
+        /* 禁止点击其他部分的遮罩层样式 */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1099;
+            display: none;
+        }
+
+        /* 响应式调整：在中等屏幕宽度时，记录块每行宽度适配 */
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+        /* 响应式调整：在小屏幕宽度时，记录块每行一个 */
+        @media (max-width: 480px) {
+            .content {
+                grid-template-columns: 1fr; /* 手机屏幕一行一块 */
+            }
+        }
+
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            right: 20px;
+            bottom: 60px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 1500;
+        }
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部标题栏 -->
+    <div class="top-bar" id="top-title">
+        生活人·记录
+        <img src="zhuye.png" alt="主页" onclick="location.href='index.html'"> <!-- 新增主页图标 -->
+    </div>
+
+    <!-- 中间内容栏 -->
+    <div class="content" id="records">
+        <p>加载中...</p>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-item" id="search-bar" onclick="toggleSearch()">
+            <img src="sousuo.png" alt="搜索" id="search-icon">
+            <span id="search-text">搜索</span>
+        </div>
+        <div class="bottom-bar-item">
+            <img src="tongji.png" alt="统计">
+            <span>统计</span>
+        </div>
+    </div>
+
+    <!-- 搜索弹窗 -->
+    <div class="overlay" id="overlay"></div>
+    <div class="search-popup" id="search-popup">
+        <div class="search-popup-content">
+            <input type="text" id="search-input" placeholder="请输入搜索关键字">
+            <button onclick="performSearch()">确认</button>
+            <button onclick="closeSearchPopup()">取消</button>
+        </div>
+    </div>
+
+    <!-- 通知弹窗 -->
+    <div class="notification" id="notification">记录已隐藏！</div>
+
+    <script>
+        // Firebase 配置和初始化
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-pZD5Mb8pejzBr3ZuHoFkJipzSWLJCpo",
+            authDomain: "jizhang-2e89a.firebaseapp.com",
+            databaseURL: "https://jizhang-2e89a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "jizhang-2e89a",
+            storageBucket: "jizhang-2e89a.firebasestorage.app",
+            messagingSenderId: "849349607897",
+            appId: "1:849349607897:web:e0eb3a2222cac60d3b99c8",
+            measurementId: "G-SYL25YT9ZC"
+        };
+
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // 获取内容容器
+        const recordsDiv = document.getElementById("records");
+        let allRecords = [];
+
+        // 更新记录的 state 字段
+        function updateRecordState(recordId) {
+            database.ref(`expenses/${recordId}`).update({ state: "已完成" })
+                .then(() => {
+                    showNotification(); // 显示通知
+                    // 更新记录列表中的状态
+                    allRecords = allRecords.map(([id, record]) => {
+                        if (id === recordId) {
+                            return [id, { ...record, state: "已完成" }];
+                        }
+                        return [id, record];
+                    });
+                    renderRecords(allRecords);
+                })
+                .catch((error) => {
+                    console.error("更新记录时发生错误: ", error);
+                });
+        }
+
+        // 显示通知弹窗
+        function showNotification() {
+            const notification = document.getElementById("notification");
+            notification.classList.add("show");
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 3000); // 显示 3 秒钟后自动隐藏
+        }
+
+        // 读取数据并渲染
+        database.ref("expenses").on("value", (snapshot) => {
+            const records = snapshot.val();
+            if (!records) {
+                recordsDiv.innerHTML = "<p>暂无数据。</p>";
+                return;
+            }
+
+            allRecords = Object.entries(records)
+                .filter(([, record]) => record.state !== "已完成" || !record.state) // 筛选未完成的记录
+                .sort(([, a], [, b]) => {
+                    // 按日期降序排列
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+            renderRecords(allRecords);
+        });
+
+        // 渲染记录
+        function renderRecords(records) {
+            recordsDiv.innerHTML = ""; // 清空之前内容
+            records.forEach(([id, record]) => {
+                const totalMoney = parseFloat(record.money);
+                const avgMoney = (totalMoney / parseInt(record.number)).toFixed(2);
+                const participants = record.namegive.split(",");
+
+                // 构建支付状态表格
+                let tableHTML = `
+                    <table>
+                        <tr>
+                            <th>分摊人</th>
+                            <th>分摊金额</th>
+                            <th>支付</th>
+                            <th>付款人</th>
+                        </tr>
+                        <tr>
+                            <td><div>${participants.join(",")}</div></td>
+                            <td><div>${avgMoney}元</div></td>
+                            <td><div>→</div></td>
+                            <td><div>${record.name}</div></td>
+                        </tr>
+                    </table>
+                `;
+
+                // 构建每条记录的HTML块
+                const recordElement = document.createElement("div");
+                recordElement.classList.add("jilu");
+                recordElement.innerHTML = `
+                    <button class="settings-btn" onclick="updateRecordState('${id}')">⚙</button>
+                    <h3>${record.date}</h3>
+                    <p>💡 ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
+                    ${tableHTML}
+                    <p class="remark">备注: ${record.why || "无备注"}</p>
+                `;
+                recordsDiv.appendChild(recordElement);
+            });
+        }
+
+        // 搜索功能
+        function toggleSearch() {
+            const searchIcon = document.getElementById("search-icon");
+            const searchText = document.getElementById("search-text");
+            if (searchText.innerText === "搜索") {
+                document.getElementById("search-popup").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+            } else {
+                // 取消搜索
+                searchText.innerText = "搜索";
+                searchIcon.src = "sousuo.png";
+                renderRecords(allRecords); // 恢复显示所有记录
+            }
+        }
+
+        function closeSearchPopup() {
+            document.getElementById("search-popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function performSearch() {
+            const keyword = document.getElementById("search-input").value.trim().toLowerCase();
+            if (keyword) {
+                const filteredRecords = allRecords.filter(([, record]) => {
+                    return Object.values(record).some(value =>
+                        value.toString().toLowerCase().includes(keyword)
+                    );
+                });
+                renderRecords(filteredRecords);
+                // 修改搜索图标和文字
+                document.getElementById("search-icon").src = "quxiao.png";
+                document.getElementById("search-text").innerText = "取消";
+            }
+            closeSearchPopup();
+        }
+    </script>
+</body>
+</html>
