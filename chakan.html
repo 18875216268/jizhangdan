@@ -162,13 +162,13 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 10px;
             border-radius: 10px;
+            background-color: #f2f2f2;
             display: none;
             z-index: 1100;
-            width: 80px; 
+            width: 90%; /* 动态宽度，适应不同设备 */
+            max-width: 378px; /* 最大宽度，防止在大屏幕上过宽 */
         }
         .search-popup-content {
             display: flex;
@@ -180,18 +180,18 @@
         .search-popup input {
             flex: 1;
             padding: 10px;
-            font-size: 16px;
+            font-size: 14px;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 20px;
             outline: none;
         }
         .search-popup button {
             padding: 10px;
-            font-size: 16px;
+            font-size: 14px;
             cursor: pointer;
             border: none;
-            border-radius: 5px;
-            width: 60px;
+            border-radius: 10px;
+            width: 65px;
             flex-shrink: 0;
         }
         .search-popup button:nth-child(2) {
@@ -201,8 +201,13 @@
         .search-popup button:nth-child(2):hover {
             background-color: #45a049;
         }
-        
-        
+        .search-popup button:nth-child(3) {
+            background-color: #f44336;
+            color: white;
+        }
+        .search-popup button:nth-child(3):hover {
+            background-color: #e53935;
+        }
 
         /* 禁止点击其他部分的遮罩层样式 */
         .overlay {
@@ -280,7 +285,7 @@
         <div class="search-popup-content">
             <input type="text" id="search-input" placeholder="请输入搜索关键字">
             <button onclick="performSearch()">确认</button>
-            
+            <button onclick="closeSearchPopup()">取消</button>
         </div>
     </div>
 
