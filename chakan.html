@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活·记账单</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .top-bar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        #top-title {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .top-bar img {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .bottom-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .bottom-bar img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .bottom-bar span {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        .content {
+            padding: 60px 10px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .jilu {
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            font-size: 12px;
+        }
+
+        .jilu h3 {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #4CAF50;
+        }
+
+        .jilu.completed h3 {
+            color: #f44336;
+        }
+
+        .jilu p {
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            width: 35px;
+        }
+
+        table th:nth-child(4),
+        table td:nth-child(4) {
+            width: 50px;
+        }
+
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            width: 80px;
+        }
+
+        table td div {
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            white-space: nowrap;
+        }
+
+        table td div::-webkit-scrollbar {
+            display: none;
+        }
+
+        .remark {
+            color: #666;
+            font-size: 12.5px;
+            margin-top: 5px;
+        }
+
+        .search-popup, .delete-confirm-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            display: none;
+            z-index: 1100;
+            width: calc(100% - 80px);
+            max-width: 400px;
+        }
+
+        .search-popup-content, .delete-confirm-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            width: 90%;
+        }
+
+        .search-button-confirm, .delete-button-confirm {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            width: 60px;
+            flex-shrink: 0;
+            background-color: #4CAF50;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button-confirm:hover, .delete-button-confirm:hover {
+            background-color: #45a049;
+        }
+
+        .search-button-cancel, .delete-button-cancel {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            width: 60px;
+            flex-shrink: 0;
+            background-color: #f44336;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button-cancel:hover, .delete-button-cancel:hover {
+            background-color: #e53935;
+        }
+
+        .search-title, .delete-confirm-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1099;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            right: 20px;
+            bottom: 60px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 1500;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top-bar" id="top-title">
+        生活人·记录
+        <img src="zhuye.png" alt="主页" onclick="location.href='index.html'">
+    </div>
+
+    <div class="content" id="records">
+        <p>加载中...</p>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="bottom-bar-item" id="toggle-bar" onclick="toggleCompletedRecords()">
+            <img src="qiehuan.png" alt="切换" id="toggle-icon">
+            <span id="toggle-text">切换</span>
+        </div>
+        <div class="bottom-bar-item" id="search-bar" onclick="toggleSearch()">
+            <img src="sousuo.png" alt="搜索" id="search-icon">
+            <span id="search-text">搜索</span>
+        </div>
+        <div class="bottom-bar-item" onclick="location.href='tongji.html'">
+            <img src="tongji.png" alt="统计">
+            <span>统计</span>
+        </div>
+        
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="search-popup" id="search-popup">
+        <div class="search-popup-content" style="flex-direction: column; align-items: center;">
+            <div class="search-title">您好，生活人！</div>
+            <input type="text" id="search-input" class="search-input" placeholder="请输入搜索关键字">
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                <button onclick="closeSearchPopup()" class="search-button-cancel">取消</button>
+                <button onclick="performSearch()" class="search-button-confirm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="delete-confirm-popup" id="delete-confirm-popup">
+        <div class="delete-confirm-content" style="flex-direction: column; align-items: center;">
+            <div class="delete-confirm-title">确认删除此条记录？</div>
+            <div style="display: flex; gap: 20px; margin-top: 10px;">
+                <button onclick="closeDeletePopup()" class="delete-button-cancel">取消</button>
+                <button onclick="confirmDelete()" class="delete-button-confirm">确认</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">记录已隐藏！</div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-pZD5Mb8pejzBr3ZuHoFkJipzSWLJCpo",
+            authDomain: "jizhang-2e89a.firebaseapp.com",
+            databaseURL: "https://jizhang-2e89a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "jizhang-2e89a",
+            storageBucket: "jizhang-2e89a.firebasestorage.app",
+            messagingSenderId: "849349607897",
+            appId: "1:849349607897:web:e0eb3a2222cac60d3b99c8",
+            measurementId: "G-SYL25YT9ZC"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const recordsDiv = document.getElementById("records");
+        let allRecords = [];
+        let showingCompleted = false;
+        let isSearching = false;
+        let currentRecordToDelete = null;
+
+        function updateRecordState(recordId) {
+            database.ref(`expenses/${recordId}`).once('value', (snapshot) => {
+                const record = snapshot.val();
+                const newState = record.state === "未完成" ? "已完成" : "未完成";
+                database.ref(`expenses/${recordId}`).update({ state: newState })
+                    .then(() => {
+                        // 根据当前显示状态决定提示文字
+                        const message = showingCompleted ? "记录已恢复！" : "记录已隐藏！";
+                        showNotification(message);
+                        
+                        // 更新 allRecords 中的记录状态
+                        allRecords = allRecords.map(([id, r]) => {
+                            if (id === recordId) {
+                                return [id, { ...r, state: newState }];
+                            }
+                            return [id, r];
+                        });
+                        
+                        // 根据当前显示状态过滤并渲染记录
+                        const filteredRecords = showingCompleted
+                            ? allRecords.filter(([, r]) => r.state === "已完成")
+                            : allRecords.filter(([, r]) => r.state !== "已完成");
+                        renderRecords(filteredRecords);
+                    })
+                    .catch((error) => {
+                        console.error("更新记录时发生错误: ", error);
+                    });
+            });
+        }
+
+        function showDeleteConfirm(recordId) {
+            currentRecordToDelete = recordId;
+            document.getElementById("delete-confirm-popup").style.display = "block";
+            document.getElementById("overlay").style.display = "block";
+        }
+
+        function closeDeletePopup() {
+            document.getElementById("delete-confirm-popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+            currentRecordToDelete = null;
+        }
+
+        function confirmDelete() {
+            if (currentRecordToDelete) {
+                database.ref(`expenses/${currentRecordToDelete}`).remove()
+                    .then(() => {
+                        showNotification("记录已删除！");
+                        // 从allRecords中移除已删除的记录
+                        allRecords = allRecords.filter(([id]) => id !== currentRecordToDelete);
+                        // 重新渲染记录
+                        const filteredRecords = showingCompleted
+                            ? allRecords.filter(([, r]) => r.state === "已完成")
+                            : allRecords.filter(([, r]) => r.state !== "已完成");
+                        renderRecords(filteredRecords);
+                        closeDeletePopup();
+                    })
+                    .catch((error) => {
+                        console.error("删除记录时发生错误: ", error);
+                    });
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById("notification");
+            notification.textContent = message;
+            notification.classList.add("show");
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 3000);
+        }
+
+        database.ref("expenses").on("value", (snapshot) => {
+            const records = snapshot.val();
+            if (!records) {
+                recordsDiv.innerHTML = "<p>暂无数据。</p>";
+                return;
+            }
+
+            // 获取所有记录并按日期排序
+            allRecords = Object.entries(records)
+                .sort(([, a], [, b]) => {
+                    return new Date(b.date) - new Date(a.date);
+                });
+
+            // 如果不是在搜索状态，则根据当前显示状态过滤记录
+            if (!isSearching) {
+                const filteredRecords = showingCompleted
+                    ? allRecords.filter(([, record]) => record.state === "已完成")
+                    : allRecords.filter(([, record]) => record.state !== "已完成");
+                renderRecords(filteredRecords);
+            }
+        });
+
+        function toggleCompletedRecords() {
+            isSearching = false; // 重置搜索状态
+            const toggleIcon = document.getElementById("toggle-icon");
+            const toggleText = document.getElementById("toggle-text");
+            showingCompleted = !showingCompleted;
+
+            // 重置搜索UI
+            const searchIcon = document.getElementById("search-icon");
+            const searchText = document.getElementById("search-text");
+            searchIcon.src = "sousuo.png";
+            searchText.innerText = "搜索";
+
+            if (showingCompleted) {
+                toggleIcon.src = "quxiao.png";
+                toggleText.innerText = "取消";
+                const completedRecords = allRecords.filter(([, record]) => record.state === "已完成");
+                renderRecords(completedRecords);
+            } else {
+                toggleIcon.src = "qiehuan.png";
+                toggleText.innerText = "切换";
+                const incompleteRecords = allRecords.filter(([, record]) => record.state !== "已完成");
+                renderRecords(incompleteRecords);
+            }
+        }
+
+        function renderRecords(records) {
+            recordsDiv.innerHTML = "";
+            if (records.length === 0) {
+                recordsDiv.innerHTML = "<p>暂无数据。</p>";
+                return;
+            }
+
+            records.forEach(([id, record]) => {
+                const totalMoney = parseFloat(record.money);
+                const avgMoney = (totalMoney / parseInt(record.number)).toFixed(2);
+                const participants = record.namegive.split(",");
+
+                let tableHTML = `
+                    <table>
+                        <tr>
+                            <th>分摊人</th>
+                            <th>分摊金额</th>
+                            <th>支付</th>
+                            <th>付款人</th>
+                        </tr>
+                        <tr>
+                            <td><div>${participants.join(",")}</div></td>
+                            <td><div>${avgMoney}元</div></td>
+                            <td><div>→</div></td>
+                            <td><div>${record.name}</div></td>
+                        </tr>
+                    </table>
+                `;
+
+                const recordElement = document.createElement("div");
+                recordElement.classList.add("jilu");
+                if (record.state === "已完成") {
+                    recordElement.classList.add("completed");
+                }
+
+                let buttonsHTML = `<button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>`;
+                
+                // 只在显示已完成记录时添加删除按钮
+                if (showingCompleted && record.state === "已完成") {
+                    buttonsHTML = `
+                        <button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>
+                        <button class="delete-btn" onclick="showDeleteConfirm('${id}')">⛔</button>
+                    `;
+                }
+
+                recordElement.innerHTML = `
+                    ${buttonsHTML}
+                    <h3>${record.date}</h3>
+                    <p>→ ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
+                    ${tableHTML}
+                    <p class="remark">备注: ${record.why || "无备注"}</p>
+                `;
+                recordsDiv.appendChild(recordElement);
+            });
+        }
+
+        function toggleSearch() {
+            const searchIcon = document.getElementById("search-icon");
+            const searchText = document.getElementById("search-text");
+            if (searchText.innerText === "搜索") {
+                document.getElementById("search-popup").style.display = "block";
+                document.getElementById("overlay").style.display = "block";
+            } else {
+                isSearching = false;
+                searchText.innerText = "搜索";
+                searchIcon.src = "sousuo.png";
+                // 重新渲染记录时需要考虑当前的显示状态
+                const filteredRecords = showingCompleted
+                    ? allRecords.filter(([, record]) => record.state === "已完成")
+                    : allRecords.filter(([, record]) => record.state !== "已完成");
+                renderRecords(filteredRecords);
+            }
+        }
+
+        function closeSearchPopup() {
+            document.getElementById("search-popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function performSearch() {
+            const keyword = document.getElementById("search-input").value.trim().toLowerCase();
+            if (keyword) {
+                isSearching = true;
+
+                // 首先根据当前显示状态(完成/未完成)过滤记录
+                let searchableRecords = showingCompleted
+                    ? allRecords.filter(([, record]) => record.state === "已完成")
+                    : allRecords.filter(([, record]) => record.state !== "已完成");
+
+                // 在过滤后的记录中搜索指定字段
+                const filteredRecords = searchableRecords.filter(([, record]) => {
+                    // 检查各个字段是否包含搜索关键字
+                    const avgMoney = (parseFloat(record.money) / parseInt(record.number)).toFixed(2);
+                    return [
+                        record.date,
+                        record.name,
+                        record.namegive,
+                        record.money,
+                        avgMoney,
+                        record.what || "",
+                        record.why || ""
+                    ].some(field =>
+                        field.toString().toLowerCase().includes(keyword)
+                    );
+                });
+
+                renderRecords(filteredRecords);
+                document.getElementById("search-icon").src = "quxiao.png";
+                document.getElementById("search-text").innerText = "取消";
+            }
+            closeSearchPopup();
+        }
+    </script>
+</body>
+
+</html>

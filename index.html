@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活·计账单</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>生活·计账单</h1>
+        <!-- 设置按钮和弹窗 -->
+        <button class="settings-btn" onclick="toggleModal('settingsModal', true)">⚙️</button>
+        <form id="expenseForm">
+            <div class="form-group">
+                <label for="name">1.您的姓名是？</label>
+                <select id="name" class="input-field" required autocomplete="name">
+                    <option value="">请选择姓名</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="namegive-title">2.与您一起消费的有？</label>
+                <input type="text" id="namegive" class="input-field" readonly required
+                    onclick="toggleModal('shareModal', true)" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="money-title">3.您花了多少money？</label>
+                <input type="number" id="money" class="input-field" step="0.01" required
+                    autocomplete="transaction-amount">
+            </div>
+
+            <div class="form-group">
+                <label for="what-title">4.您们买了什么？</label>
+                <input type="text" id="what" class="input-field" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="why-title">5.其它(,･∀･)ﾉ゛</label>
+                <input type="text" id="why" class="input-field" maxlength="500" autocomplete="off">
+            </div>
+            <!-- 按钮块 -->
+            <div class="btn-block">
+                <button type="button" class="btn view-btn" onclick="window.location.href='tongji.html'">查看</button>
+                <button type="submit" class="btn submit-btn">提交</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- 提示消息 -->
+    <div id="toastMessage" class="toast-message"></div>
+
+    <!-- 分摊人选择弹窗 -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal('shareModal', false)">&times;</span>
+            <h2>选择·生活人</h2>
+            <div id="shareSelections" class="select-group"></div>
+            <button class="btn" onclick="confirmShare()">确认</button>
+        </div>
+    </div>
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal('settingsModal', false)">&times;</span>
+            <h2>输入·生活人</h2>
+            <input type="text" id="newName" class="input-field" placeholder="多个姓名请用逗号分隔......">
+            <div class="shezhi-anniukuang">
+                <button class="btn shezhi-btn del-btn" onclick="deleteName()">删除</button>
+                <button class="btn shezhi-btn add-btn" onclick="addNewName()">添加</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

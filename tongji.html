@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生活·统计单</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            font-size: 12.5px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .顶部块 {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 6vh;
+            z-index: 1000;
+        }
+
+        .顶部块 h1 {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            text-align: center;  
+        }
+
+        .主页图标 {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 25px;
+        }
+
+        .内容块 {
+            position: fixed;
+            top: 50px;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: calc(100vh - 100px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            z-index: 1;
+        }
+
+        .数据块 {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            overflow: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .数据块::-webkit-scrollbar {
+            display: none;
+        }
+
+        .数据块 p{
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        th::-webkit-scrollbar,
+        td::-webkit-scrollbar {
+            display: none;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* 设置列宽 */
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 45%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 25%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 10%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 20%;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .底部块 {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 7vh;
+            z-index: 1000;
+        }
+
+        .功能块 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .功能块 img {
+            height: 20px;
+            margin-bottom: 2px;
+        }
+
+        .功能块 p {
+            font-size: 10.5px;
+        }
+
+        .弹窗遮罩 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .弹窗内容 {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .弹窗内容 h2 {
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .弹窗内容 input {
+            width: 90%;
+            margin: 10px 0;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+/* 父容器样式 */
+.筛选弹窗按钮 {
+    display: flex;               /* 使用 flex 布局 */
+    justify-content: center;     /* 水平居中 */
+    gap: 20px;                   /* 按钮之间的间距 */
+    padding: 10px;               /* 内边距（可选） */
+}
+
+/* 取消按钮样式 */
+.筛选弹窗按钮 button:nth-of-type(1) {
+    background-color: red;       /* 红色背景 */
+    color: white;                /* 白色文字 */
+    padding: 10px 20px;          /* 按钮大小 */
+    border: none;                /* 无边框 */
+    border-radius: 5px;          /* 圆角 */
+    cursor: pointer;             /* 鼠标悬浮时变成手型 */
+    transition: background-color 0.3s ease; /* 动画过渡 */
+}
+
+.筛选弹窗按钮 button:nth-of-type(1):hover {
+    background-color: rgb(183, 6, 6);   /* 悬浮时深红色 */
+}
+
+/* 搜索按钮样式 */
+.筛选弹窗按钮 button:nth-of-type(2) {
+    background-color: rgb(10, 170, 10);     /* 绿色背景 */
+    color: white;                /* 白色文字 */
+    padding: 10px 20px;          /* 按钮大小 */
+    border: none;                /* 无边框 */
+    border-radius: 5px;          /* 圆角 */
+    cursor: pointer;             /* 鼠标悬浮时变成手型 */
+    transition: background-color 0.3s ease; /* 动画过渡 */
+}
+
+.筛选弹窗按钮 button:nth-of-type(2):hover {
+    background-color: rgb(3, 123, 3); /* 悬浮时深绿色 */
+}
+
+    </style>
+</head>
+
+<body>
+    <!-- 顶部块 -->
+    <div class="顶部块">
+        <h1>生活人·统计</h1>
+        <a href="index.html">
+            <img src="zhuye.png" alt="主页logo" class="主页图标">
+        </a>
+    </div>
+    <!-- 内容块 -->
+    <div class="内容块">
+        <div class="数据块" id="dataBlock">
+            <!-- 表格数据动态加载 -->
+        </div>
+    </div>
+    <!-- 底部功能块 -->
+    <div class="底部块">
+        <div class="功能块 筛选功能块" id="筛选功能块" onclick="切换筛选()">
+            <img src="sousuo.png" alt="查询" id="筛选图标">
+            <p id="筛选文字">查询</p>
+        </div>
+        <div class="功能块 记录功能块" onclick="location.href='chakan.html'">
+            <img src="tongji.png" alt="细则">
+            <p>细则</p>
+        </div>
+    </div>
+
+    <!-- 筛选弹窗 -->
+    <div class="弹窗遮罩" id="筛选弹窗" style="display: none;">
+        <div class="弹窗内容">
+            <h2>您好·生活人！</h2>
+            <input type="date" id="startDate" placeholder="开始日期">
+            <input type="date" id="endDate" placeholder="结束日期">
+            <input type="text" id="name" placeholder="输入收款人（多个用逗号分隔）">
+            <div class="筛选弹窗按钮">
+                <button onclick="关闭弹窗()">取消</button>
+                <button onclick="应用筛选()">搜索</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript代码保持不变
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-pZD5Mb8pejzBr3ZuHoFkJipzSWLJCpo",
+            authDomain: "jizhang-2e89a.firebaseapp.com",
+            databaseURL: "https://jizhang-2e89a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "jizhang-2e89a",
+            storageBucket: "jizhang-2e89a.firebaseapp.com",
+            messagingSenderId: "849349607897",
+            appId: "1:849349607897:web:e0eb3a2222cac60d3b99c8",
+            measurementId: "G-SYL25YT9ZC"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let is筛选中 = false;
+
+        function 切换筛选() {
+            if (is筛选中) {
+                is筛选中 = false;
+                document.getElementById('筛选图标').src = 'sousuo.png';
+                document.getElementById('筛选文字').textContent = '查询';
+                loadAndProcessData();
+            } else {
+                打开弹窗();
+            }
+        }
+
+        function 打开弹窗() {
+            document.getElementById('筛选弹窗').style.display = 'flex';
+        }
+
+        function 关闭弹窗() {
+            document.getElementById('筛选弹窗').style.display = 'none';
+        }
+
+        function 应用筛选() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const names = document.getElementById('name').value.trim();
+
+            const filter = {};
+            if (startDate) filter.startDate = startDate;
+            if (endDate) filter.endDate = endDate;
+            if (names) filter.names = names.split(/,|，/).map(name => name.trim());
+
+            is筛选中 = true;
+            document.getElementById('筛选图标').src = 'quxiao.png';
+            document.getElementById('筛选文字').textContent = '取消';
+
+            loadAndProcessData(filter);
+            关闭弹窗();
+        }
+
+        function loadAndProcessData(filter = {}) {
+            const dataBlock = document.getElementById('dataBlock');
+            const today = getTodayDate();
+
+            database.ref('expenses').on('value', snapshot => {
+                const data = snapshot.val();
+                if (data) {
+                    let records = Object.values(data);
+
+                    if (!filter.startDate && !filter.endDate && !filter.names) {
+                        records = records.filter(record => formatDate(record.date) === today);
+                    } else {
+                        if (filter.startDate) {
+                            records = records.filter(record => {
+                                const recordDate = formatDate(record.date);
+                                return new Date(recordDate) >= new Date(filter.startDate);
+                            });
+                        }
+                        if (filter.endDate) {
+                            records = records.filter(record => {
+                                const recordDate = formatDate(record.date);
+                                return new Date(recordDate) <= new Date(filter.endDate);
+                            });
+                        }
+                        if (filter.names) {
+                            records = records.filter(record => filter.names.includes(record.name));
+                        }
+                    }
+
+                    if (records.length === 0) {
+                        dataBlock.innerHTML = '<p>暂无符合条件的数据~</p>';
+                        return;
+                    }
+
+                    const results = processRecords(records);
+                    displayResults(results);
+                } else {
+                    dataBlock.innerHTML = '<p>暂无数据！</p>';
+                }
+            }, error => {
+                console.error('数据监听失败:', error);
+                dataBlock.innerHTML = '<p style="color: red;">数据加载失败，请稍后重试。</p>';
+            });
+        }
+
+        function formatDate(dateTime) {
+            const [date] = dateTime.split(' ');
+            return date.replace(/\//g, '-');
+        }
+
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function processRecords(records) {
+            const directSums = {};
+
+            records.forEach(record => {
+                const payer = record.name;
+                const payees = record.namegive.split(",");
+                const avgMoney = parseFloat(record.avgmoney);
+
+                payees.forEach(payee => {
+                    if (payee !== payer) {
+                        if (!directSums[payee]) {
+                            directSums[payee] = {};
+                        }
+                        if (!directSums[payee][payer]) {
+                            directSums[payee][payer] = 0;
+                        }
+                        directSums[payee][payer] += avgMoney;
+                    }
+                });
+            });
+
+            const finalSums = {};
+
+            for (const payee in directSums) {
+                for (const payer in directSums[payee]) {
+                    const amount = directSums[payee][payer];
+                    const reverseAmount = directSums[payer]?.[payee] || 0;
+
+                    if (amount > reverseAmount) {
+                        if (!finalSums[payee]) {
+                            finalSums[payee] = {};
+                        }
+                        finalSums[payee][payer] = amount - reverseAmount;
+                    } else if (amount < reverseAmount) {
+                        if (!finalSums[payer]) {
+                            finalSums[payer] = {};
+                        }
+                        finalSums[payer][payee] = reverseAmount - amount;
+                    }
+
+                    if (directSums[payer]) {
+                        delete directSums[payer][payee];
+                    }
+                }
+            }
+
+            return finalSums;
+        }
+
+        function displayResults(results) {
+            const dataBlock = document.getElementById('dataBlock');
+
+            let html = '<table>';
+            html += '<tr><th>分摊人</th><th>分摊金额</th><th>支付</th><th>付款人</th></tr>';
+
+            for (const payee in results) {
+                for (const payer in results[payee]) {
+                    const amount = results[payee][payer].toFixed(2);
+                    html += `<tr>
+                        <td>${payee}</td>
+                        <td>${amount}</td>
+                        <td>→</td>
+                        <td>${payer}</td>
+                     </tr>`;
+                }
+            }
+
+            html += '</table>';
+            dataBlock.innerHTML = html;
+        }
+
+        // 默认加载当天数据
+        loadAndProcessData();
+    </script>
+</body>
+
+</html>
