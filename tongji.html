@@ -27,24 +27,15 @@
         .顶部块 {
             background-color: #4CAF50;
             color: white;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+            font-size: 10.5px;
             position: fixed;
             top: 0;
             width: 100%;
-            height: 6vh;
             z-index: 1000;
-        }
-
-        .顶部块 h1 {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-            text-align: center;  
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .主页图标 {
@@ -76,7 +67,6 @@
             background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 5px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             overflow: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
@@ -124,7 +114,7 @@
         /* 设置列宽 */
         th:nth-child(1),
         td:nth-child(1) {
-            width: 45%;
+            width: 30%;
         }
 
         th:nth-child(2),
@@ -134,12 +124,12 @@
 
         th:nth-child(3),
         td:nth-child(3) {
-            width: 10%;
+            width: 15%;
         }
 
         th:nth-child(4),
         td:nth-child(4) {
-            width: 20%;
+            width: 30%;
         }
 
         tr:nth-child(even) {
@@ -153,14 +143,13 @@
         .底部块 {
             background-color: #4CAF50;
             color: white;
-            text-align: center;
-            padding: 5px 0;
+            align-items: center; 
             display: flex;
             justify-content: space-around;
             position: fixed;
             bottom: 0;
             width: 100%;
-            height: 7vh;
+            padding: 8px 0; 
             z-index: 1000;
         }
 
@@ -169,7 +158,7 @@
             flex-direction: column;
             align-items: center;
             cursor: pointer;
-            margin-top: 5px;
+            margin-top: 2px;
         }
 
         .功能块 img {
