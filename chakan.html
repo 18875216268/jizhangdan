@@ -494,60 +494,68 @@
         }
 
         function renderRecords(records) {
-            recordsDiv.innerHTML = "";
-            if (records.length === 0) {
-                recordsDiv.innerHTML = "<p>暂无数据。</p>";
-                return;
-            }
+    recordsDiv.innerHTML = "";
+    if (records.length === 0) {
+        recordsDiv.innerHTML = "<p>暂无数据。</p>";
+        return;
+    }
 
-            records.forEach(([id, record]) => {
-                const totalMoney = parseFloat(record.money);
-                const avgMoney = (totalMoney / parseInt(record.number)).toFixed(2);
-                const participants = record.namegive.split(",");
+    // 获取当天日期的 yyyy/mm/dd 格式
+    const today = new Date();
+    const todayString = `${today.getFullYear()}/${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}`;
 
-                let tableHTML = `
-                    <table>
-                        <tr>
-                            <th>分摊人</th>
-                            <th>分摊金额</th>
-                            <th>支付</th>
-                            <th>付款人</th>
-                        </tr>
-                        <tr>
-                            <td><div>${participants.join(",")}</div></td>
-                            <td><div>${avgMoney}元</div></td>
-                            <td><div>→</div></td>
-                            <td><div>${record.name}</div></td>
-                        </tr>
-                    </table>
-                `;
+    records.forEach(([id, record]) => {
+        const totalMoney = parseFloat(record.money);
+        const avgMoney = (totalMoney / parseInt(record.number)).toFixed(2);
+        const participants = record.namegive.split(",");
 
-                const recordElement = document.createElement("div");
-                recordElement.classList.add("jilu");
-                if (record.state === "已完成") {
-                    recordElement.classList.add("completed");
-                }
+        let tableHTML = `
+            <table>
+                <tr>
+                    <th>分摊人</th>
+                    <th>分摊金额</th>
+                    <th>支付</th>
+                    <th>付款人</th>
+                </tr>
+                <tr>
+                    <td><div>${participants.join(",")}</div></td>
+                    <td><div>${avgMoney}元</div></td>
+                    <td><div>→</div></td>
+                    <td><div>${record.name}</div></td>
+                </tr>
+            </table>
+        `;
 
-                let buttonsHTML = `<button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>`;
-                
-                // 只在显示已完成记录时添加删除按钮
-                if (showingCompleted && record.state === "已完成") {
-                    buttonsHTML = `
-                        <button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>
-                        <button class="delete-btn" onclick="showDeleteConfirm('${id}')">⛔</button>
-                    `;
-                }
-
-                recordElement.innerHTML = `
-                    ${buttonsHTML}
-                    <h3>${record.date}</h3>
-                    <p>→ ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
-                    ${tableHTML}
-                    <p class="remark">备注: ${record.why || "无备注"}</p>
-                `;
-                recordsDiv.appendChild(recordElement);
-            });
+        const recordElement = document.createElement("div");
+        recordElement.classList.add("jilu");
+        if (record.state === "已完成") {
+            recordElement.classList.add("completed");
         }
+
+        // 提取记录日期的 yyyy/mm/dd 部分并判断是否与当天日期匹配
+        const recordDate = record.date.split(" ")[0];
+        const dateStyle = recordDate !== todayString ? "style='color: red;'" : "";
+
+        let buttonsHTML = `<button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>`;
+        
+        // 只在显示已完成记录时添加删除按钮
+        if (showingCompleted && record.state === "已完成") {
+            buttonsHTML = `
+                <button class="settings-btn" onclick="updateRecordState('${id}')">🔖</button>
+                <button class="delete-btn" onclick="showDeleteConfirm('${id}')">⛔</button>
+            `;
+        }
+
+        recordElement.innerHTML = `
+            ${buttonsHTML}
+            <h3 ${dateStyle}>${record.date}</h3>
+            <p>→ ${record.name}: ${totalMoney}元（${record.what || "无说明"}）</p>
+            ${tableHTML}
+            <p class="remark">备注: ${record.why || "无备注"}</p>
+        `;
+        recordsDiv.appendChild(recordElement);
+    });
+}
 
         function toggleSearch() {
             const searchIcon = document.getElementById("search-icon");
