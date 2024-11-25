@@ -351,6 +351,9 @@
                 const data = snapshot.val();
                 if (data) {
                     let records = Object.values(data);
+                     
+                    // 首先过滤掉已完成的记录
+                     records = records.filter(record => record.state !== "已完成");
 
                     if (!filter.startDate && !filter.endDate && !filter.names) {
                         records = records.filter(record => formatDate(record.date) === today);
