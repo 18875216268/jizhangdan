@@ -111,7 +111,6 @@
             z-index: 10;
         }
 
-        /* 设置列宽 */
         th:nth-child(1),
         td:nth-child(1) {
             width: 30%;
@@ -207,62 +206,57 @@
             font-size: 14px;
         }
 
-/* 父容器样式 */
-.筛选弹窗按钮 {
-    display: flex;               /* 使用 flex 布局 */
-    justify-content: center;     /* 水平居中 */
-    gap: 20px;                   /* 按钮之间的间距 */
-    padding: 10px;               /* 内边距（可选） */
-}
+        .筛选弹窗按钮 {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px;
+        }
 
-/* 取消按钮样式 */
-.筛选弹窗按钮 button:nth-of-type(1) {
-    background-color: red;       /* 红色背景 */
-    color: white;                /* 白色文字 */
-    padding: 10px 20px;          /* 按钮大小 */
-    border: none;                /* 无边框 */
-    border-radius: 5px;          /* 圆角 */
-    cursor: pointer;             /* 鼠标悬浮时变成手型 */
-    transition: background-color 0.3s ease; /* 动画过渡 */
-}
+        .筛选弹窗按钮 button:nth-of-type(1) {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-.筛选弹窗按钮 button:nth-of-type(1):hover {
-    background-color: rgb(183, 6, 6);   /* 悬浮时深红色 */
-}
+        .筛选弹窗按钮 button:nth-of-type(1):hover {
+            background-color: rgb(183, 6, 6);
+        }
 
-/* 搜索按钮样式 */
-.筛选弹窗按钮 button:nth-of-type(2) {
-    background-color: rgb(10, 170, 10);     /* 绿色背景 */
-    color: white;                /* 白色文字 */
-    padding: 10px 20px;          /* 按钮大小 */
-    border: none;                /* 无边框 */
-    border-radius: 5px;          /* 圆角 */
-    cursor: pointer;             /* 鼠标悬浮时变成手型 */
-    transition: background-color 0.3s ease; /* 动画过渡 */
-}
+        .筛选弹窗按钮 button:nth-of-type(2) {
+            background-color: rgb(10, 170, 10);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-.筛选弹窗按钮 button:nth-of-type(2):hover {
-    background-color: rgb(3, 123, 3); /* 悬浮时深绿色 */
-}
-
+        .筛选弹窗按钮 button:nth-of-type(2):hover {
+            background-color: rgb(3, 123, 3);
+        }
     </style>
 </head>
 
 <body>
-    <!-- 顶部块 -->
     <div class="顶部块">
         <h1>生活人·统计</h1>
         <a href="index.html">
             <img src="zhuye.png" alt="主页logo" class="主页图标">
         </a>
     </div>
-    <!-- 内容块 -->
+
     <div class="内容块">
         <div class="数据块" id="dataBlock">
             <!-- 表格数据动态加载 -->
         </div>
     </div>
-    <!-- 底部功能块 -->
+
     <div class="底部块">
         <div class="功能块 筛选功能块" id="筛选功能块" onclick="切换筛选()">
             <img src="sousuo.png" alt="查询" id="筛选图标">
@@ -274,7 +268,6 @@
         </div>
     </div>
 
-    <!-- 筛选弹窗 -->
     <div class="弹窗遮罩" id="筛选弹窗" style="display: none;">
         <div class="弹窗内容">
             <h2>您好·生活人！</h2>
@@ -289,7 +282,6 @@
     </div>
 
     <script>
-        // JavaScript代码保持不变
         const firebaseConfig = {
             apiKey: "AIzaSyB-pZD5Mb8pejzBr3ZuHoFkJipzSWLJCpo",
             authDomain: "jizhang-2e89a.firebaseapp.com",
@@ -345,19 +337,19 @@
 
         function loadAndProcessData(filter = {}) {
             const dataBlock = document.getElementById('dataBlock');
-            const today = getTodayDate();
 
             database.ref('expenses').on('value', snapshot => {
                 const data = snapshot.val();
                 if (data) {
                     let records = Object.values(data);
-                     
-                    // 首先过滤掉已完成的记录
-                     records = records.filter(record => record.state !== "已完成");
-
+                    
+                    // 修改默认筛选逻辑：显示所有未完成的记录
                     if (!filter.startDate && !filter.endDate && !filter.names) {
-                        records = records.filter(record => formatDate(record.date) === today);
+                        records = records.filter(record => record.state !== "已完成");
                     } else {
+                        // 修改筛选逻辑：显示已完成且符合条件的记录
+                        records = records.filter(record => record.state === "已完成");
+                        
                         if (filter.startDate) {
                             records = records.filter(record => {
                                 const recordDate = formatDate(record.date);
@@ -394,14 +386,6 @@
         function formatDate(dateTime) {
             const [date] = dateTime.split(' ');
             return date.replace(/\//g, '-');
-        }
-
-        function getTodayDate() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
         }
 
         function processRecords(records) {
@@ -475,9 +459,8 @@
             dataBlock.innerHTML = html;
         }
 
-        // 默认加载当天数据
+        // 默认加载未完成的记录
         loadAndProcessData();
     </script>
 </body>
-
 </html>
